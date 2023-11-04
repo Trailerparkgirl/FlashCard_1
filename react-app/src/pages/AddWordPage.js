@@ -1,16 +1,13 @@
 import React from "react";
-import { WordProvider } from "../components/WordContext";
-import { NewWordForm } from "../components/NewWordForm";
+import { AddWordForm } from "../features/AddWordForm";
 
 const AddWord = () => {
 
   return (
-    <WordProvider>
       <div>
-        <h1>get words memorized</h1>
-        <NewWordForm />
+        <h1>Get Words Memorized</h1>
+        <AddWordForm />
       </div>
-    </WordProvider>
   );
   
 };
