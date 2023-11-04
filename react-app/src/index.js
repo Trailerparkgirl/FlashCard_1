@@ -1,26 +1,16 @@
-import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./pages/Layout";
-import Home from "./pages/Home";
-import AddWord from "./pages/AddWordPage";
-import WordList from "./pages/WordList";
-import { WordProvider } from "./components/WordContext";
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import App from './app'
+import store from './app/store'
+import { Provider } from 'react-redux'
 
-export default function App() {
-  return (
-    <BrowserRouter>
-    <WordProvider>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="Addword" element={<AddWord />} />
-          <Route path="WordList" element={<WordList/>}/>
-        </Route>
-      </Routes>
-      </WordProvider>
-    </BrowserRouter>
-  );
-}
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+  ReactDOM.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <App/>
+      </Provider>
+    </React.StrictMode>,
+    document.getElementById('root')
+  )
