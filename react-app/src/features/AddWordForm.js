@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { nanoid } from '@reduxjs/toolkit'
 
@@ -24,10 +24,58 @@ export const AddWordForm = () => {
         })
       )
 
+      // Store the new word in IndexedDB
+      storeWordInIndexedDB({ id: nanoid(), word, definition });
+
       setWord('')
       setdefinition('')
     }
   }
+
+  const initializeIndexedDB = useCallback(async () => {
+    const db = await openIndexedDB();
+    if (db) {
+      if (!db.objectStoreNames.contains('words')) {
+        db.createObjectStore('words', { keyPath: 'id' });
+      }
+    }
+  }, []);
+
+// Initialize IndexedDB when the component is loaded
+useEffect(() => {
+    initializeIndexedDB();
+  }, [initializeIndexedDB]);
+
+
+
+  // Function to open the IndexedDB database
+  const openIndexedDB = async () => {
+    const openRequest = window.indexedDB.open('myDatabase', 1);
+
+    return new Promise((resolve, reject) => {
+      openRequest.onsuccess = (event) => {
+        resolve(event.target.result);
+      };
+
+      openRequest.onerror = (event) => {
+        console.error('Error opening IndexedDB:', event.target.error);
+        reject(event.target.error);
+      };
+    });
+  };
+
+  // Function to store a word in IndexedDB
+  const storeWordInIndexedDB = (wordData) => {
+    openIndexedDB().then((db) => {
+        console.log('Opened the database');
+      const transaction = db.transaction(['words'], 'readwrite');
+      console.log('Started transaction');
+      const objectStore = transaction.objectStore('words');
+      console.log('Accessed object store');
+      objectStore.add(wordData);
+      console.log('Added word to object store');
+    });
+  };
 
   return (
     <section>

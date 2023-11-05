@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = [
+export const initialState = [
   { id: '1', word: 'distraction', definition: 'mansuural' },
   { id: '2', word: 'complimentary', definition: 'unegui' },
 ]
@@ -11,7 +11,7 @@ const wordsSlice = createSlice({
   reducers: {
     wordAdded(state, action) {
       state.push(action.payload)
-    },
+    }
   },
 })
 
