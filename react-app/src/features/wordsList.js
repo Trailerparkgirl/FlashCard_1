@@ -1,20 +1,25 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import axios from 'axios';
+import { useSelector,useDispatch } from 'react-redux'
+import { wordAdded } from './wordsSlice'
 
-const saveWord = (newWord) => {
-  axios.post('http://localhost:3000/WordList', newWord)
-    .then((response) => {
-      console.log('Word saved:', response.data);
-    })
-    .catch((error) => {
-      console.error('Error saving word:', error);
-    });
-};
-saveWord();
 
 export const WordsList = () => {
   const words = useSelector((state) => state.words)
+  const dispatch = useDispatch()
+
+  const storedWordsInLocal = JSON.parse(localStorage.getItem('words')) || [];
+
+  // Iterate over storedWordsInLocal and add to Redux store if not present
+  for (let i = 0; i < storedWordsInLocal.length; i++) {
+    const checkWord = (word) => word.word === storedWordsInLocal[i].word;
+    const result = words.filter(checkWord);
+
+     // If the word is not present in the Redux store, add it
+    if (result.length === 0) {
+      dispatch(wordAdded(storedWordsInLocal[i]));
+    }
+  }
+  console.log(words);
 
   const renderedWords = words.map((word) => (
     <article className="post-excerpt" key={word.id}>
