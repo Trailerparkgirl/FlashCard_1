@@ -30,7 +30,9 @@ export const WordsList = () => {
   return (
     <section className="posts-list">
       <h2>Words</h2>
-      {renderedWords}
+      {words.map((word)=>(
+        word.is
+      }
     </section>
   )
 }
