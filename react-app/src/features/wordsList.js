@@ -31,7 +31,7 @@ export const WordsList = () => {
     <section className="posts-list">
       <h2>Words</h2>
       {words.map((word)=>(
-        word.is
+        word.isEditing ? <wordEditing/>: <wordForm/>
       }
     </section>
   )
