@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 export const initialState = [
-  { id: '1', word: 'distraction', definition: 'mansuural' },
-  { id: '2', word: 'complimentary', definition: 'unegui' },
+  { id: '1', isEditing: false, word: 'distraction', definition: 'mansuural' },
+  { id: '2', isEditing: false, word: 'complimentary', definition: 'unegui' },
 ]
 
 const wordsSlice = createSlice({
@@ -11,10 +11,18 @@ const wordsSlice = createSlice({
   reducers: {
     wordAdded(state, action) {
       state.push(action.payload)
+    },
+    wordEdited(state, action){
+      const { id, updatedWord } = action.payload;
+      const wordToEdit = state.find((word) => word.id === id);
+
+      if (wordToEdit) {
+        Object.assign(wordToEdit, updatedWord);
+      }
     }
   },
 })
 
-export const { wordAdded } = wordsSlice.actions
+export const { wordAdded, wordEdited } = wordsSlice.actions
 
 export default wordsSlice.reducer

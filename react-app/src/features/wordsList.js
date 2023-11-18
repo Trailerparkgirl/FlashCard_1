@@ -1,11 +1,14 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { useSelector,useDispatch } from 'react-redux'
-import { wordAdded } from './wordsSlice'
+import { wordAdded, wordEdited } from './wordsSlice'
+import EditWordForm from '../components/EditWordForm'
+import Word from '../components/Word'
 
 
 export const WordsList = () => {
   const words = useSelector((state) => state.words)
   const dispatch = useDispatch()
+  const [reduxWords, setWords]= useState(words);
 
   const storedWordsInLocal = JSON.parse(localStorage.getItem('words')) || [];
 
@@ -21,16 +24,36 @@ export const WordsList = () => {
   }
   console.log(words);
 
-  const renderedWords = words.map((word) => (
-    <article className="post-excerpt" key={word.id}>
-      <p className="post-content">{word.word} - {word.definition.substring(0, 100)}</p>
-    </article>
-  ))
+  // buh locald bga ugiig ustgalaa
+  // localStorage.clear();
 
+  // edit function g idevhijuulegch
+  const editTrigger = id => {
+    setWords(
+      reduxWords.map((word)=>
+        word.id === id ? {...word, isEditing: !word.isEditing } : word)
+    );
+    console.log(words);
+  }
+  
+  // EditWordForm oos irsen ugiig redux store bolon localStorage luu shahna
+  const editWord = (editedWord, editedDefinition, id) =>{
+    dispatch(wordEdited({ id: id, updatedWord: { word: editedWord, definition: editedDefinition } }));
+
+    setWords(
+      words.map((word) =>
+        word.id === id ? { ...word, word: editedWord, defition: editedDefinition, isEditing: !word.isEditing } : word
+      )
+    );
+  }
+  console.log()
+  
   return (
     <section className="posts-list">
       <h2>Words</h2>
-      {renderedWords}
+      {words.map((word)=>(
+        word.isEditing ? <EditWordForm word={word} editWord={editWord}/>: <Word key={word.id} word={word} editTrigger={editTrigger}/>
+      ))}
     </section>
   )
 }

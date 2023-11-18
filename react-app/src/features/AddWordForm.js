@@ -18,6 +18,7 @@ export const AddWordForm = () => {
     if (word && definition) {
         const newWord = {
             id: nanoid(),
+            isEditing: false,
             word,
             definition,
           };

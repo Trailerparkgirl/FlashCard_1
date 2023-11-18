@@ -27,7 +27,7 @@ const Home = () => {
   }
 
   //searching for the random word
-  const getRndmWord = (e)=>{
+  const generateRndmWord = (e)=>{
     e.preventDefault();
     const rndmVal = words[getRndmId(length)];
     setRndmWord(rndmVal.word);
@@ -36,8 +36,8 @@ const Home = () => {
     return (
     <div>
       <h1>{rndmWord}</h1>
-      <button onClick={getRndmWord}>generate a word</button>
+      <button onClick={generateRndmWord}>generate a word</button>
     </div>)
   };
   
-  export default Home; 
+  export default Home;  
