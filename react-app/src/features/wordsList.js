@@ -8,7 +8,7 @@ import Word from '../components/Word'
 export const WordsList = () => {
   const words = useSelector((state) => state.words)
   const dispatch = useDispatch()
-  const [reduxWords, setWords]= useState(words);
+  
 
   const storedWordsInLocal = JSON.parse(localStorage.getItem('words')) || [];
 
@@ -22,18 +22,21 @@ export const WordsList = () => {
       dispatch(wordAdded(storedWordsInLocal[i]));
     }
   }
-  console.log(words);
+  console.log('asd', words);
+
+  const [reduxWords, setWords]= useState(words);
 
   // buh locald bga ugiig ustgalaa
   // localStorage.clear();
 
   // edit function g idevhijuulegch
   const editTrigger = id => {
+    setWords(words)
     setWords(
       reduxWords.map((word)=>
         word.id === id ? {...word, isEditing: !word.isEditing } : word)
     );
-    console.log(words);
+    console.log(reduxWords);
   }
   
   // EditWordForm oos irsen ugiig redux store bolon localStorage luu shahna
@@ -41,8 +44,8 @@ export const WordsList = () => {
     dispatch(wordEdited({ id: id, updatedWord: { word: editedWord, definition: editedDefinition } }));
 
     setWords(
-      words.map((word) =>
-        word.id === id ? { ...word, word: editedWord, defition: editedDefinition, isEditing: !word.isEditing } : word
+      reduxWords.map((word) =>
+        word.id === id ? { ...word, word: editedWord, definition: editedDefinition, isEditing: !word.isEditing } : word
       )
     );
   }
@@ -51,9 +54,9 @@ export const WordsList = () => {
   return (
     <section className="posts-list">
       <h2>Words</h2>
-      {words.map((word)=>(
-        word.isEditing ? <EditWordForm word={word} editWord={editWord}/>: <Word key={word.id} word={word} editTrigger={editTrigger}/>
-      ))}
+      {words.map((word)=>
+        word.isEditing ? (<EditWordForm word={word} editWord={editWord}/>): (<Word key={word.id} word={word} editTrigger={editTrigger}/>)
+      )}
     </section>
   )
 }

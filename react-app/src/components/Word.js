@@ -4,7 +4,7 @@ const Word = ({word, editTrigger}) => {
 
   return (
     <div>
-      <p>{word.word}</p>
+      <p>{word.word} - {word.definition}</p>
       <div>
         <button onClick={()=>editTrigger(word.id)}>edit</button>
         {/* <button onClick={()=>deleteWord(word.id)}>delete</button> */}
@@ -13,4 +13,4 @@ const Word = ({word, editTrigger}) => {
   );
 }
 
-export default Word;
+export default Word;  
