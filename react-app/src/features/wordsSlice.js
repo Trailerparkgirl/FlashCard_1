@@ -19,10 +19,18 @@ const wordsSlice = createSlice({
       if (wordToEdit) {
         Object.assign(wordToEdit, updatedWord);
       }
+    },
+    toggleIsEditing(state, action) {
+      const { id } = action.payload;
+      const wordToToggle = state.find((word) => word.id === id);
+
+      if (wordToToggle) {
+        wordToToggle.isEditing = !wordToToggle.isEditing;
+      }
     }
   },
 })
 
-export const { wordAdded, wordEdited } = wordsSlice.actions
+export const { wordAdded, wordEdited, toggleIsEditing } = wordsSlice.actions
 
 export default wordsSlice.reducer

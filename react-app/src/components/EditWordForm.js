@@ -11,10 +11,10 @@ const EditWordForm = ({word, editWord}) => {
         editWord(wordValue, defiValue, word.id);
       };
   return (
-    <form onSubmit={handleSubmit} className="TodoForm">
+    <form className="TodoForm">
     <input type="text" value={wordValue} onChange={(e) => setValue(e.target.value)} className="" placeholder='Update word' />
     <input type="text" value={defiValue} onChange={(e) => setDefiValue(e.target.value)} className="" placeholder='Update definition' />
-    <button type="submit" className=''>click</button>
+    <button type="submit" className='' onClick={handleSubmit}>click</button>
   </form>
   )
 }
