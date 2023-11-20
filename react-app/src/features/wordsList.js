@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
-import { toggleIsEditing, wordAdded, wordEdited } from './wordsSlice'
+import { toggleIsEditing, wordAdded, wordEdited, wordDeleted } from './wordsSlice'
 import EditWordForm from '../components/EditWordForm'
 import Word from '../components/Word'
 
@@ -26,14 +26,14 @@ export const WordsList = () => {
   }
   updateReduxStore();
   
-  console.log('asd', words);
+  console.log(words);
 
   // buh locald bga ugiig ustgalaa
   // localStorage.clear();
 
   // edit function g idevhijuulegch
   const editTrigger = id => {
-    dispatch(toggleIsEditing({ id: id }));
+    dispatch(toggleIsEditing({ id }));
   }
   
   // EditWordForm oos irsen ugiig redux store bolon localStorage luu shahna
@@ -46,13 +46,20 @@ export const WordsList = () => {
     )
     localStorage.setItem('words', JSON.stringify(updatedWord));
   }
-  console.log()
+
+  // Delete function
+  const deleteWord = (id) =>{
+    dispatch(wordDeleted({id}));
+    //localStorage
+    const newWordList = storedWordsInLocal.filter(word=> word.id !== id);
+    localStorage.setItem('words', JSON.stringify(newWordList))
+  }
   
   return (
     <section className="posts-list">
       <h2>Words</h2>
       {words.map((word)=>
-        word.isEditing ? (<EditWordForm word={word} editWord={editWord}/>): (<Word key={word.id} word={word} editTrigger={editTrigger}/>)
+        word.isEditing ? (<EditWordForm word={word} editWord={editWord}/>): (<Word key={word.id} word={word} editTrigger={editTrigger} deleteWord={deleteWord}/>)
       )}
     </section>
   )

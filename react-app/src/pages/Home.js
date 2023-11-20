@@ -5,8 +5,10 @@ import { wordAdded } from "../features/wordsSlice";
 const Home = () => {
   const dispatch = useDispatch()
   const [rndmWord, setRndmWord] = useState("click button below")
+  const [rndmDefi, setRndmDefi] = useState("")
   const words = useSelector((state) => state.words)
   const length = words.length
+  const [flipper, setFlipper] = useState(true);
 
   // restoring words from localStorage to redux store
   const storedWordsInLocal = JSON.parse(localStorage.getItem('words')) || [];
@@ -22,7 +24,7 @@ const Home = () => {
     }
   }
 
-  function getRndmId(max){
+  const getRndmId = (max)=>{
     return Math.floor(Math.random()*max);
   }
 
@@ -31,13 +33,18 @@ const Home = () => {
     e.preventDefault();
     const rndmVal = words[getRndmId(length)];
     setRndmWord(rndmVal.word);
+    setRndmDefi(rndmVal.definition)
+    setFlipper(true)
   }
+  const flipWord = () => {
+    setFlipper(!flipper)
+  };
 
     return (
     <div>
-      <h1>{rndmWord}</h1>
+      {flipper? (<h1 onClick={flipWord}>{rndmWord}</h1>): (<h1 onClick={flipWord}>{rndmDefi}</h1>)}
       <button onClick={generateRndmWord}>generate a word</button>
     </div>)
   };
   
-  export default Home;  
+  export default Home;

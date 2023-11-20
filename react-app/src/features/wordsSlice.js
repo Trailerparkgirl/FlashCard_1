@@ -27,10 +27,14 @@ const wordsSlice = createSlice({
       if (wordToToggle) {
         wordToToggle.isEditing = !wordToToggle.isEditing;
       }
+    },
+    wordDeleted(state, action) {
+      const { id } = action.payload;
+      return state = state.filter(word => word.id !== id);
     }
   },
 })
 
-export const { wordAdded, wordEdited, toggleIsEditing } = wordsSlice.actions
+export const { wordAdded, wordEdited, toggleIsEditing, wordDeleted } = wordsSlice.actions
 
 export default wordsSlice.reducer
