@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { wordAdded } from "../features/wordsSlice";
+import axios from 'axios';
 
 const Home = () => {
   const dispatch = useDispatch()
@@ -40,11 +41,58 @@ const Home = () => {
     setFlipper(!flipper)
   };
 
+
+const userInput = "how humans forget things?"
+
+const callChatGPT = async (prompt) => {
+    try {
+        const response = await axios.post(
+          'https://api.openai.com/v1/chat/completions',
+          {
+            model: 'gpt-3.5-turbo',
+            messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: prompt }],
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer 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`,
+            },
+          }
+        );
+    
+        return response.data.choices[0].message.content;
+      } catch (error) {
+        console.error('Error calling ChatGPT:', error);
+        return 'An error occurred while processing your request.';
+      }
+}
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      console.log("requeting");
+      const response = await callChatGPT(userInput);
+      console.log(response)
+      // Handle the response here
+    } catch (error) {
+      // Handle errors
+      console.error('Error:', error);
+    }
+  };
+
+  fetchData(); // Call the fetchData function
+
+}, []); // The empty dependency array means this effect will run once after the initial render
+
+
+
+
     return (
     <div>
       {flipper? (<h1 onClick={flipWord}>{rndmWord}</h1>): (<h1 onClick={flipWord}>{rndmDefi}</h1>)}
       <button onClick={generateRndmWord}>generate a word</button>
+      {/* <callChatGPT/>  */}
     </div>)
   };
   
-  export default Home;
+  export default Home; 
