@@ -1,17 +1,18 @@
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
 import { wordAdded } from "../features/wordsSlice";
-import axios from 'axios';
 
 const Home = () => {
-  const dispatch = useDispatch()
-  const [rndmWord, setRndmWord] = useState("click button below")
-  const [rndmDefi, setRndmDefi] = useState("")
-  const words = useSelector((state) => state.words)
-  const length = words.length
+  const dispatch = useDispatch();
+  const [rndmWord, setRndmWord] = useState("click button below");
+  const [rndmDefi, setRndmDefi] = useState("");
   const [flipper, setFlipper] = useState(true);
+  const [aiResponse, setAiResponse] = useState(""); // State to store AI response
 
-  // restoring words from localStorage to redux store
+  const words = useSelector((state) => state.words);
+  const length = words.length;
+
+  // Restoring words from localStorage to redux store
   const storedWordsInLocal = JSON.parse(localStorage.getItem('words')) || [];
 
   // Iterate over storedWordsInLocal and add to Redux store if not present
@@ -19,80 +20,66 @@ const Home = () => {
     const checkWord = (word) => word.word === storedWordsInLocal[i].word;
     const result = words.filter(checkWord);
 
-     // If the word is not present in the Redux store, add it
+    // If the word is not present in the Redux store, add it
     if (result.length === 0) {
       dispatch(wordAdded(storedWordsInLocal[i]));
     }
   }
 
-  const getRndmId = (max)=>{
-    return Math.floor(Math.random()*max);
+  const getRndmId = (max) => {
+    return Math.floor(Math.random() * max);
   }
 
-  //searching for the random word
-  const generateRndmWord = (e)=>{
+  // Searching for the random word
+  const generateRndmWord = (e) => {
     e.preventDefault();
     const rndmVal = words[getRndmId(length)];
     setRndmWord(rndmVal.word);
-    setRndmDefi(rndmVal.definition)
-    setFlipper(true)
+    setRndmDefi(rndmVal.definition);
+    setFlipper(true);
+
+    // Call AI model for the definition
+    getAiResponse(rndmVal.word);
   }
+
   const flipWord = () => {
-    setFlipper(!flipper)
+    setFlipper(!flipper);
   };
 
+  // Function to call the Google Generative AI API and get a response
+  const getAiResponse = async (word) => {
+    const { GoogleGenerativeAI } = require("@google/generative-ai");
+    const genAI = new GoogleGenerativeAI("AIzaSyCaUfNXRH1iY1maa-e36B5_iPNsPhJSDjU");
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const userInput = "how humans forget things?"
-
-const callChatGPT = async (prompt) => {
     try {
-        const response = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
-          {
-            model: 'gpt-3.5-turbo',
-            messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: prompt }],
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer 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`,
-            },
-          }
-        );
-    
-        return response.data.choices[0].message.content;
-      } catch (error) {
-        console.error('Error calling ChatGPT:', error);
-        return 'An error occurred while processing your request.';
-      }
-}
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      console.log("requeting");
-      const response = await callChatGPT(userInput);
-      console.log(response)
-      // Handle the response here
+      const prompt = `define ${word} with one sentence in english.`;
+      const result = await model.generateContent(prompt);
+      const response = await result.response.text();
+      setAiResponse(response);  // Update state with AI response
     } catch (error) {
-      // Handle errors
-      console.error('Error:', error);
+      console.error("Error fetching AI response:", error);
     }
-  };
+  }
 
-  fetchData(); // Call the fetchData function
-
-}, []); // The empty dependency array means this effect will run once after the initial render
-
-
-
-
-    return (
+  return (
     <div>
-      {flipper? (<h1 onClick={flipWord}>{rndmWord}</h1>): (<h1 onClick={flipWord}>{rndmDefi}</h1>)}
-      <button onClick={generateRndmWord}>generate a word</button>
-      {/* <callChatGPT/>  */}
-    </div>)
-  };
-  
-  export default Home; 
+      {flipper ? (
+        <h1 onClick={flipWord}>{rndmWord}</h1>
+      ) : (
+        <h1 onClick={flipWord}>{rndmDefi}</h1>
+      )}
+      <button onClick={generateRndmWord}>Generate a word</button>
+
+      {/* Render AI response here */}
+      {aiResponse && (
+        <div>
+          <h2>AI Definition:</h2>
+          <p>{aiResponse}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Home;
