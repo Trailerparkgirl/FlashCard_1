@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { wordAdded } from "../features/wordsSlice";
+import { wordAdded, dataLoaded } from "../features/wordsSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -8,23 +8,31 @@ const Home = () => {
   const [rndmDefi, setRndmDefi] = useState("");
   const [flipper, setFlipper] = useState(true);
   const [aiResponse, setAiResponse] = useState(""); // State to store AI response
+  const isDataLoaded = useSelector((state) => state.words.dataLoaded); // Access the dataLoaded flag
 
   const words = useSelector((state) => state.words);
   const length = words.length;
 
-  // Restoring words from localStorage to redux store
-  const storedWordsInLocal = JSON.parse(localStorage.getItem('words')) || [];
+  // Fetch words from the MySQL database when the component mounts
+  useEffect(() => {
+    const fetchWords = async () => {
+      if (!isDataLoaded) {  // Check if data has already been loaded
+        try {
+          const response = await fetch('http://localhost:5000/words');
+          const data = await response.json();
+          
+          data.forEach((word) => {
+            dispatch(wordAdded(word));
+          });
+          dispatch(dataLoaded());  // Set the dataLoaded flag to true
+        } catch (error) {
+          console.error('Failed to fetch words:', error);
+        }
+      }
+    };
 
-  // Iterate over storedWordsInLocal and add to Redux store if not present
-  for (let i = 0; i < storedWordsInLocal.length; i++) {
-    const checkWord = (word) => word.word === storedWordsInLocal[i].word;
-    const result = words.filter(checkWord);
-
-    // If the word is not present in the Redux store, add it
-    if (result.length === 0) {
-      dispatch(wordAdded(storedWordsInLocal[i]));
-    }
-  }
+    fetchWords();
+  }, [dispatch, isDataLoaded]);
 
   const getRndmId = (max) => {
     return Math.floor(Math.random() * max);

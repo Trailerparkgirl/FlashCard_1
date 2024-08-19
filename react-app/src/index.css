@@ -4,8 +4,8 @@
   
   body {
     font-family: sans-serif;
-    margin: 3rem;
-    background-color: #dfdfdf;
+    /* margin: 3rem; */
+    background-color: #352f2f;
   }
   
   h1, h2 {
@@ -100,4 +100,8 @@
     flex: 1;
     padding: 20px;
   }
-  
+
+  .icon {
+    background-color: #a0850e;
+    width: '5px'
+  }
