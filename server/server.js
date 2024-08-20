@@ -9,8 +9,8 @@ app.use(express.json()); // For parsing JSON data
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
-    database: 'test'
+    password: '0123',
+    database: 'my_app'
 });
 
 db.connect((err) => {
