@@ -1,20 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const initialState = [
-  { id: '1', isEditing: false, word: 'distraction', definition: 'mansuural' },
-  { id: '2', isEditing: false, word: 'complimentary', definition: 'unegui' },
-]
+const initialState = {
+  words: [], // Array to hold word objects with structure: { id: '', word: '', definition: '', isEditing: false }
+  dataLoaded: false,
+  // ... other state variables
+};
 
 const wordsSlice = createSlice({
   name: 'words',
   initialState,
   reducers: {
     wordAdded(state, action) {
-      state.push(action.payload)
+      state.words.push(action.payload)
     },
     wordEdited(state, action){
       const { id, updatedWord } = action.payload;
-      const wordToEdit = state.find((word) => word.id === id);
+      const wordToEdit = state.words.find((word) => word.id === id);
 
       if (wordToEdit) {
         Object.assign(wordToEdit, updatedWord);
@@ -22,19 +23,22 @@ const wordsSlice = createSlice({
     },
     toggleIsEditing(state, action) {
       const { id } = action.payload;
-      const wordToToggle = state.find((word) => word.id === id);
+      const wordToToggle = state.words.find((word) => word.id === id);
 
       if (wordToToggle) {
         wordToToggle.isEditing = !wordToToggle.isEditing;
       }
     },
-    wordDeleted(state, action) {
-      const { id } = action.payload;
-      return state = state.filter(word => word.id !== id);
-    }
+    wordDeleted: (state, action) => {
+      state.words = state.words.filter(word => word.id !== action.payload.id);
+    },    
+
+    dataLoaded: (state, action) => {
+      state.dataLoaded = true;  // Set flag to true when data is loaded
+    },
   },
 })
 
-export const { wordAdded, wordEdited, toggleIsEditing, wordDeleted } = wordsSlice.actions
+export const { wordAdded, wordEdited, toggleIsEditing, wordDeleted, dataLoaded } = wordsSlice.actions
 
 export default wordsSlice.reducer
